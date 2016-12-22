@@ -74,10 +74,10 @@ allprojects {
         mavenCentral()
     }
 }
-//
+
 apply plugin: "com.jfrog.artifactory"
 apply from: file('gradle/credentials.gradle')
-//apply from: file('gradle/sonarqube.gradle')
+apply from: file('gradle/sonarqube.gradle')
 apply from: file('gradle/convention.gradle')
 //apply from: file('gradle/integTest.gradle')
 //apply from: file('gradle/maven.gradle')
@@ -96,21 +96,21 @@ subprojects {
         }
     }
 }
-//
-//artifactory {
-//    //contextUrl = "http://oss.jfrog.org"
-//    contextUrl = "http://localhost:8081/artifactory"
-//}
 
-//artifactoryPublish.skip true
+artifactory {
+    //contextUrl = "http://oss.jfrog.org"
+    contextUrl = "http://localhost:8081/artifactory"
+}
+
+artifactoryPublish.skip true
 semanticRelease {
     repo {
         ghToken = project.ext.ghToken
-//        releaseAsset aggregateJar, contentType: 'application/zip'
-//        releaseAsset aggregateSourcesJar, label: 'the sources of the project', contentType:
-//                'application/zip'
-//        releaseAsset aggregateJavadocJar, label: 'the javadoc of the project', contentType:
-//                'application/zip'
+        releaseAsset aggregateJar, contentType: 'application/zip'
+        releaseAsset aggregateSourcesJar, label: 'the sources of the project', contentType:
+                'application/zip'
+        releaseAsset aggregateJavadocJar, label: 'the javadoc of the project', contentType:
+                'application/zip'
     }
 
 }
