@@ -76,7 +76,7 @@ allprojects {
 }
 //
 //apply plugin: "com.jfrog.artifactory"
-//apply from: file('gradle/credentials.gradle')
+apply from: file('gradle/credentials.gradle')
 //apply from: file('gradle/sonarqube.gradle')
 //apply from: file('gradle/convention.gradle')
 //apply from: file('gradle/integTest.gradle')
