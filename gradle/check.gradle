@@ -1,0 +1,88 @@
+subprojects {
+    if (project in publishedModules) {
+
+// Checkstyle
+      /*  apply plugin: 'checkstyle'
+        checkstyle {
+            ignoreFailures = true
+            configFile = rootProject.file('codequality/checkstyle.xml')
+        }*/
+
+// FindBugs
+        apply plugin: 'findbugs'
+        findbugs {
+            ignoreFailures = true
+        }
+
+// PMD
+        apply plugin: 'pmd'
+        tasks.withType(Pmd) {
+            reports.html.enabled true
+        }
+
+        apply plugin: 'jacoco'
+
+        jacocoTestReport {
+            group = "Coverage reports"
+            description = 'Generate Jacoco coverage reports after running tests.'
+            additionalSourceDirs = project.files(sourceSets.main.allSource.srcDirs)
+            sourceDirectories = project.files(sourceSets.main.allSource.srcDirs)
+            classDirectories = project.files(sourceSets.main.allSource.srcDirs)
+            reports {
+                xml.enabled = !(project in integTestModules) && !isCi
+                csv.enabled = false
+                html.enabled = !(project in integTestModules) && !isCi
+            }
+        }
+        jacocoTestReport.dependsOn check
+
+        if (project in integTestModules) {
+
+            task integTest(type: Test) {
+                group = "verification"
+                testClassesDir = sourceSets.integTest.output.classesDir
+                classpath = sourceSets.integTest.runtimeClasspath
+                outputs.upToDateWhen {false}
+                mustRunAfter test
+
+            }
+            check.dependsOn(integTest)
+
+            task jacocoMerge(type: JacocoMerge) {
+                executionData test, integTest
+                onlyIf {
+                    file("$buildDir/jacoco/test.exec").exists() && file(
+                            "$buildDir/jacoco/integTest.exec").exists()
+                }
+            }
+
+            task jacocoMergedReport(type: JacocoReport) {
+                group = "Coverage reports"
+                executionData jacocoMerge.destinationFile
+                dependsOn jacocoTestReport, jacocoMerge
+                mustRunAfter jacocoTestReport
+                reports {
+                    xml.enabled = !isCi
+                    csv.enabled = false
+                    html.enabled = !isCi
+                    html.destination = file("${reporting.baseDir}/jacoco/test/html")
+                    xml.destination = file("${reporting.baseDir}/jacoco/test/jacocoTestReport.xml")
+                }
+                sourceDirectories = files(sourceSets.main.allSource.srcDirs)
+                classDirectories = files(sourceSets.main.output)
+            }
+
+            build.dependsOn jacocoMergedReport
+
+        }
+
+        tasks.withType(Test) {
+            group = "verification"
+            reports.junitXml.destination = "$buildDir/test-results"
+            jacoco {
+                enabled = true
+            }
+        }
+
+    }
+}

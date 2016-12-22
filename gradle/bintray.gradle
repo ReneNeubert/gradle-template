@@ -1,0 +1,51 @@
+
+apply plugin: 'com.jfrog.bintray'
+
+bintray {
+
+    user = bintrayUser
+    key = bintrayKey
+    dryRun = false
+    publish = false
+    publications = ['mavenJava']
+
+    pkg {
+        repo = 'softcake'
+        name = rootProject.name + "." + project.name
+        userOrg = 'softcake'
+        desc = description
+        websiteUrl = github.site
+        issueTrackerUrl = github.issues
+        vcsUrl = github.vcsUrl
+        vcsUrl = "https://github.com/softcake/softcake.lemon.git"
+        licenses = ['Apache-2.0']
+        labels = ['softcake', 'test', 'java']
+        publicDownloadNumbers = true
+        githubRepo = github.user + '/' + github.repository //Optional Github repository
+        //githubReleaseNotesFile = 'README.md' //Optional Github readme file
+
+        //noinspection GroovyAssignabilityCheck
+        version {
+            released = new Date()
+            name = project.version.toString()
+            vcsTag = project.version.toString()
+            attributes = ['gradle-plugin': ['org.softcake', project.group, project.name].join(':')]
+
+            gpg {
+                sign = true
+            }
+
+            mavenCentralSync {
+                sync = false
+                def ossUser = System.getenv("SONATYPE_USERNAME") ?:
+                        project.hasProperty("sonatypeOssUsername") ? project.sonatypeOssUsername : ''
+                def ossPass = System.getenv("SONATYPE_PASSWORD") ?:
+                        project.hasProperty("sonatypeOssPassword") ? project.sonatypeOssPassword : ''
+                user = ossUser
+                password = ossPass
+                close = '1'
+
+            }
+        }
+    }
+}
