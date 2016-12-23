@@ -88,6 +88,7 @@ subprojects {project ->
         apply from: "$rootDir/gradle/bintray.gradle"
         apply from: "$rootDir/gradle/artifactory.gradle"
         String branch = versioning.info.branch
+        //TODO remove next line
         artifactoryPublish.skip true
         final BRANCH_NAMES_PATTERN = /^(?:release[-\/])?[0-9]+(\.[0-9]+)?\.x$|^(?:feature[-\/]|hotfix[-\/]|develop|master)?$/
         apply plugin: 'maven-publish'
