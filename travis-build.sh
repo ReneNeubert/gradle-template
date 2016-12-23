@@ -1,7 +1,7 @@
 #!/bin/bash
 # This script will build the project.
 
-git fsck --full
+#git fsck --full
 
 EXIT_STATUS=0
 
