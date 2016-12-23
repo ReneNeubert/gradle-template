@@ -29,7 +29,10 @@ subprojects {project ->
             property "sonar.junit.reportsPath", "${project.buildDir}/test-results"
             if (project in integTestModules) {
                 property "sonar.jacoco.itReportPath", "${project.buildDir}/jacoco/integTest.exec"
-                properties["sonar.tests"] += sourceSets.integTest.allSource.srcDirs
+                if (sourceSets.integTest.allSource.srcDirs == null){
+                    properties["sonar.tests"] += sourceSets.integTest.allSource.srcDirs
+                }
+
             }
         }
     }
