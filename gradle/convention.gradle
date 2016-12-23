@@ -93,7 +93,7 @@ subprojects {project ->
         apply plugin: 'maven-publish'
 
         println("1: " + branch)
-        if (version.toString().endsWith('-SNAPSHOT')) {
+        if (!version.toString().endsWith('-SNAPSHOT')) {
             println("2: " + branch)
             publish.dependsOn getTasksByName("bintrayUpload", true)
             if (branch.matches(BRANCH_NAMES_PATTERN)) {
