@@ -87,6 +87,25 @@ subprojects {project ->
         apply from: "$rootDir/gradle/publishing.gradle"
         apply from: "$rootDir/gradle/bintray.gradle"
         apply from: "$rootDir/gradle/artifactory.gradle"
+        def branch = versioning.info.branch
+
+        final BRANCH_NAMES_PATTERN = /^(?:release[-\/])?[0-9]+(\.[0-9]+)?\.x$|^(?:feature[-\/]|hotfix[-\/]|develop|master)?$/
+        apply plugin: 'maven-publish'
+
+
+        if (!version.toString().endsWith('-SNAPSHOT')) {
+            publish.dependsOn getTasksByName("bintrayUpload", true)
+            if (branch.matches(BRANCH_NAMES_PATTERN)) {
+                bintrayUpload.dependsOn getTasksByName("sonarqube", true)
+            }
+        } else if ((System.getenv('TRAVIS_PULL_REQUEST') ?: "false") == "false") {
+            // publish.dependsOn getTasksByName("artifactoryPublish", true)
+            if (branch.matches(BRANCH_NAMES_PATTERN)) {
+                publish.dependsOn getTasksByName("sonarqube", true)
+                // artifactoryPublish.dependsOn getTasksByName("sonarqube", true)
+            }
+        }
+
     }
     if (project in integTestModules) {
         apply plugin: "java"
