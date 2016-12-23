@@ -56,8 +56,8 @@ public class TalkClient implements Conversation {
         TalkClient remote = new TalkClient(url);
 //        /*System.out.println(remote.greeting().getWhole());
 //        System.out.println(remote.farewell().getWhole());*/
-        System.out.println(remote.greeting().getWhole());
         
+
     }
 
     @Override
