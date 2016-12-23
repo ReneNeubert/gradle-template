@@ -98,7 +98,8 @@ subprojects {
 
 artifactory {
     //contextUrl = "http://oss.jfrog.org"
-    contextUrl = "http://localhost:8081/artifactory"
+    //contextUrl = "http://localhost:8081/artifactory"
+    contextUrl = 'http://oss.jfrog.org/artifactory'
 }
 
 artifactoryPublish.skip true

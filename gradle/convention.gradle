@@ -87,27 +87,20 @@ subprojects {project ->
         apply from: "$rootDir/gradle/publishing.gradle"
         apply from: "$rootDir/gradle/bintray.gradle"
         apply from: "$rootDir/gradle/artifactory.gradle"
-        def branch = versioning.info.branch
-
+        String branch = versioning.info.branch
+        artifactoryPublish.skip true
         final BRANCH_NAMES_PATTERN = /^(?:release[-\/])?[0-9]+(\.[0-9]+)?\.x$|^(?:feature[-\/]|hotfix[-\/]|develop|master)?$/
         apply plugin: 'maven-publish'
 
-        println("1: " + branch)
         if (!version.toString().endsWith('-SNAPSHOT')) {
-            println("2: " + branch)
-            //publish.dependsOn getTasksByName("bintrayUpload", true)
+            publish.dependsOn getTasksByName("bintrayUpload", true)
             if (branch.matches(BRANCH_NAMES_PATTERN)) {
-                println("3: " + branch)
-               // bintrayUpload.dependsOn getTasksByName("sonarqube", true)
+                bintrayUpload.dependsOn rootProject.getTasksByName("sonarqube", true)
             }
         } else if ((System.getenv('TRAVIS_PULL_REQUEST') ?: "false") == "false") {
-            println("1: " + version.toString())
-
              publish.dependsOn getTasksByName("artifactoryPublish", true)
             if (branch.matches(BRANCH_NAMES_PATTERN)) {
-                println("2: " + version.toString())
-                //publish.dependsOn getTasksByName("sonarqube", true)
-                 artifactoryPublish.dependsOn getTasksByName("sonarqube", true)
+                 artifactoryPublish.dependsOn rootProject.getTasksByName("sonarqube", true)
             }
         }
 

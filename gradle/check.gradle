@@ -9,16 +9,16 @@ subprojects {
         }*/
 
 // FindBugs
-        apply plugin: 'findbugs'
+     /*   apply plugin: 'findbugs'
         findbugs {
             ignoreFailures = true
         }
-
+*/
 // PMD
-        apply plugin: 'pmd'
+       /* apply plugin: 'pmd'
         tasks.withType(Pmd) {
             reports.html.enabled true
-        }
+        }*/
 
         apply plugin: 'jacoco'
 
