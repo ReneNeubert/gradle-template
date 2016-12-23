@@ -93,12 +93,12 @@ subprojects {project ->
         apply plugin: 'maven-publish'
 
         println("1: " + branch)
-        if (!version.toString().endsWith('-SNAPSHOT')) {
+        if (version.toString().endsWith('-SNAPSHOT')) {
             println("2: " + branch)
             publish.dependsOn getTasksByName("bintrayUpload", true)
             if (branch.matches(BRANCH_NAMES_PATTERN)) {
                 println("3: " + branch)
-                bintrayUpload.dependsOn getTasksByName("sonarqube", true)
+                bintrayUpload.dependsOn rootProject.getTasksByName("sonarqube", true)
             }
         } else if ((System.getenv('TRAVIS_PULL_REQUEST') ?: "false") == "false") {
             println("1: " + version.toString())
@@ -107,7 +107,7 @@ subprojects {project ->
             if (branch.matches(BRANCH_NAMES_PATTERN)) {
                 println("2: " + version.toString())
                 //publish.dependsOn getTasksByName("sonarqube", true)
-                 artifactoryPublish.dependsOn getTasksByName("sonarqube", true)
+                 artifactoryPublish.dependsOn rootProject.getTasksByName("sonarqube", true)
             }
         }
 
