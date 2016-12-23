@@ -17,11 +17,12 @@ sonarqube {
         property "sonar.scm.disabled", true
     }
 }
-
+//rootProject.tasks["sonarqube"].dependsOn jacoco
 subprojects {project ->
 
     sonarqube {
         skipProject = !(project in sonarQubeModules)
+
         properties {
             property "sonar.jacoco.reportPath", "${project.buildDir}/jacoco/test.exec"
             property "sonar.sources", "src/main/java"
@@ -36,5 +37,6 @@ subprojects {project ->
             }
         }
     }
+
 }
 
