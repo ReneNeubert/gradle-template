@@ -1,0 +1,32 @@
+apply plugin: "idea"
+
+
+sourceSets {
+    integTest {
+        compileClasspath += main.output + test.output
+        runtimeClasspath += main.output + test.output
+        java.srcDir file('src/integTest/java')
+        resources.srcDir file('src/integTest/resources')
+    }
+}
+// Setup dependencies for integration testing
+dependencies {
+    integTestCompile sourceSets.main.output
+    integTestCompile sourceSets.test.output
+    integTestCompile configurations.testCompile
+    integTestRuntime configurations.testRuntime
+}
+configurations {
+    integTestCompile.extendsFrom testCompile
+    integTestRuntime.extendsFrom testRuntime
+}
+idea {
+    module {
+        testSourceDirs += sourceSets.integTest.java.srcDirs
+        testSourceDirs += sourceSets.integTest.resources.srcDirs
+        scopes.TEST.plus.add(configurations.integTestCompile)
+        scopes.TEST.plus.add(configurations.integTestRuntime)
+
+    }
+}
+

@@ -1,0 +1,33 @@
+apply plugin: 'maven-publish'
+apply plugin: 'maven'
+apply plugin: 'com.jfrog.artifactory'
+
+artifactoryPublish {
+    dependsOn sourcesJar, javadocJar
+}
+
+rootProject.artifactory {
+    contextUrl = 'http://oss.jfrog.org/artifactory'
+    //contextUrl = 'http://localhost:8081/artifactory'
+    publish {
+        repository {
+            repoKey = isSnapshot ? 'oss-snapshot-local' : 'oss-release-local'
+            //repoKey = isSnapshot ? 'libs-snapshot-local' : 'libs-release-local'
+
+            username = bintrayUser
+            password = bintrayKey
+
+        }
+
+        defaults {
+            publications('mavenJava')
+        }
+    }
+
+     resolve {
+         repository {
+             repoKey = 'libs-snapshot-local'
+         }
+     }
+}
+

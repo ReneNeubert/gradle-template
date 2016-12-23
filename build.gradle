@@ -1,0 +1,131 @@
+import org.gradle.internal.jvm.Jvm
+
+import java.text.SimpleDateFormat
+
+buildscript {
+    repositories {
+        jcenter()
+        mavenLocal()
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    apply from: file('gradle/buildscript.gradle'), to: buildscript
+
+}
+
+plugins {
+    id "ru.vyarus.github-info" version "1.1.0"
+    id "com.github.ben-manes.versions" version "0.13.0"
+    id "net.nemerosa.versioning" version "2.5.0"
+    id "org.sonarqube" version "2.2.1"
+     id "de.gliderpilot.semantic-release" version "1.2.0"
+
+
+
+}
+
+github {
+    user "ReneNeubert"
+    license "Apache"
+}
+
+Date buildTimeAndDate = new Date()
+
+ext {
+    githubProjectName = rootProject.name
+    // Change if github project name is not the same as the root project's name
+    isSnapshot = version.toString().endsWith("-SNAPSHOT")
+    isTravis = System.getenv("TRAVIS") != null
+    isCi = isTravis
+    jvm = Jvm.current()
+    javaVersion = JavaVersion.current()
+    isCi = false //TODO
+    isWindows = org.gradle.internal.os.OperatingSystem.current().windows
+
+    publishedModules = ["template-client", "template-server"].collect {project(it)}
+    noCodeModules = ["template-no-code"].collect {project(it)}
+    integTestModules = publishedModules.findAll {
+        !(it.name in ["template-no-code", "template-manual"])
+    }
+    benchmarkModules = publishedModules.findAll {
+        !(it.name in ["template-no-code", "template-manual","template-server"])
+    }
+    apiModules = publishedModules.findAll {!(it.name in ["template-manual"])}
+    sonarQubeModules = publishedModules
+
+    buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
+    buildTime = new SimpleDateFormat('HH:mm:ss').format(buildTimeAndDate)
+    buildRevision = versioning.info.commit
+    builtByValue = project.hasProperty("builtBy") ? project.builtBy : project.defaultBuiltBy
+    //System.properties['user.name']
+
+    if (!javaVersion.java8Compatible) {
+        throw new IllegalStateException("Must be built with Java 8 or higher")
+    }
+}
+
+allprojects {
+    group = "org.softcake" // TEMPLATE: Set to organization of project
+    repositories {
+        jcenter()
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
+apply plugin: "com.jfrog.artifactory"
+apply from: file('gradle/credentials.gradle')
+apply from: file('gradle/sonarqube.gradle')
+apply from: file('gradle/convention.gradle')
+//apply from: file('gradle/integTest.gradle')
+//apply from: file('gradle/maven.gradle')
+apply from: file('gradle/check.gradle')
+//apply from: file('gradle/license.gradle')
+//apply from: file('gradle/release.gradle')
+
+subprojects {
+
+    if (plugins.hasPlugin(JavaPlugin) || plugins.hasPlugin(GroovyPlugin)) {
+        dependencies {
+            compile 'javax.ws.rs:jsr311-api:1.1.1'
+            compile 'com.sun.jersey:jersey-core:1.11'
+            testCompile 'org.testng:testng:6.1.1'
+            testCompile 'org.mockito:mockito-core:1.8.5'
+        }
+    }
+}
+
+artifactory {
+    //contextUrl = "http://oss.jfrog.org"
+    contextUrl = "http://localhost:8081/artifactory"
+}
+
+artifactoryPublish.skip true
+semanticRelease {
+    repo {
+        ghToken = project.ext.ghToken
+        releaseAsset aggregateJar, contentType: 'application/zip'
+        releaseAsset aggregateSourcesJar, label: 'the sources of the project', contentType:
+                'application/zip'
+        releaseAsset aggregateJavadocJar, label: 'the javadoc of the project', contentType:
+                'application/zip'
+    }
+
+}
+String branch = versioning.info.branch
+
+final BRANCH_NAMES_PATTERN = /^(?:release[-\/])?[0-9]+(\.[0-9]+)?\.x$|^(?:feature[-\/]|hotfix[-\/]|develop|master)?$/
+apply plugin: 'maven-publish'
+if (!version.toString().endsWith('-SNAPSHOT')) {
+   // publish.dependsOn getTasksByName("bintrayUpload", true)
+    if (branch.matches(BRANCH_NAMES_PATTERN)) {
+      //  bintrayUpload.dependsOn getTasksByName("sonarqube", true)
+    }
+} else if ((System.getenv('TRAVIS_PULL_REQUEST') ?: "false") == "false") {
+   // publish.dependsOn getTasksByName("artifactoryPublish", true)
+    if (branch.matches(BRANCH_NAMES_PATTERN)) {
+       // artifactoryPublish.dependsOn getTasksByName("sonarqube", true)
+    }
+}
