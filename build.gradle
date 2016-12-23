@@ -125,6 +125,7 @@ if (!version.toString().endsWith('-SNAPSHOT')) {
     }
 } else if ((System.getenv('TRAVIS_PULL_REQUEST') ?: "false") == "false") {
    // publish.dependsOn getTasksByName("artifactoryPublish", true)
+    publish.dependsOn getTasksByName("sonarqube", true)
     if (branch.matches(BRANCH_NAMES_PATTERN)) {
         publish.dependsOn getTasksByName("sonarqube", true)
        // artifactoryPublish.dependsOn getTasksByName("sonarqube", true)
