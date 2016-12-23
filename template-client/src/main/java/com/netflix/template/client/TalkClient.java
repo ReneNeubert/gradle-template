@@ -54,9 +54,9 @@ public class TalkClient implements Conversation {
 
         String url = "http://localhost:8080/template-server/rest";
         TalkClient remote = new TalkClient(url);
-//        /*System.out.println(remote.greeting().getWhole());
-//        System.out.println(remote.farewell().getWhole());*/
-        
+//        System.out.println(remote.greeting().getWhole());
+        System.out.println(remote.farewell().getWhole());
+
 
     }
 
