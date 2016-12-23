@@ -99,10 +99,10 @@ subprojects {project ->
                 bintrayUpload.dependsOn getTasksByName("sonarqube", true)
             }
         } else if ((System.getenv('TRAVIS_PULL_REQUEST') ?: "false") == "false") {
-            // publish.dependsOn getTasksByName("artifactoryPublish", true)
+             publish.dependsOn getTasksByName("artifactoryPublish", true)
             if (branch.matches(BRANCH_NAMES_PATTERN)) {
-                publish.dependsOn getTasksByName("sonarqube", true)
-                // artifactoryPublish.dependsOn getTasksByName("sonarqube", true)
+                //publish.dependsOn getTasksByName("sonarqube", true)
+                 artifactoryPublish.dependsOn getTasksByName("sonarqube", true)
             }
         }
 
