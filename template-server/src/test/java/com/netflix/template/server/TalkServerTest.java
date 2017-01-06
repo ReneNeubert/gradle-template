@@ -27,6 +27,13 @@ import org.junit.Test;
 public class TalkServerTest {
 
     @Test
+    public void farewell() throws Exception {
+        TalkServer talkServer = new TalkServer();
+        String whole = talkServer.farewell().getWhole();
+        Assert.assertThat(whole, is("Goodbye"));
+    }
+
+    @Test
     public void greeting() throws Exception {
 
         TalkServer talkServer = new TalkServer();
