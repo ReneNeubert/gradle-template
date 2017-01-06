@@ -87,6 +87,7 @@ subprojects {project ->
         apply from: "$rootDir/gradle/publishing.gradle"
         apply from: "$rootDir/gradle/bintray.gradle"
         apply from: "$rootDir/gradle/artifactory.gradle"
+        
         String branch = versioning.info.branch
         //TODO remove next line
         artifactoryPublish.skip true
@@ -104,7 +105,7 @@ subprojects {project ->
                  artifactoryPublish.dependsOn rootProject.getTasksByName("sonarqube", true)
             }
         }
-
+        apply from: "$rootDir/gradle/degraph.gradle"
     }
     if (project in integTestModules) {
         apply plugin: "java"

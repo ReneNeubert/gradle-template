@@ -1,0 +1,52 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "de.schauderhaft.degraph:degraph-check:0.1.4"
+    }
+}
+
+
+import de.schauderhaft.degraph.check.JCheck
+import static de.schauderhaft.degraph.check.JCheck.violationFree
+import static org.hamcrest.MatcherAssert.assertThat
+import static org.hamcrest.Matchers.is
+
+task degraph(type: DegraphCheck) {
+    reportFile = new File(buildDir, "reports/degraph/testResult.graphml")
+    classpath = sourceSets.main.output
+    println(classpath.asPath)
+}
+
+check.dependsOn degraph
+
+class DegraphCheck extends DefaultTask {
+
+    @InputFiles
+    FileCollection classpath
+
+    @OutputFile
+    File reportFile
+
+    @TaskAction
+    void runDegraph() {
+        def graph = JCheck.customClasspath(classpath.asPath)
+                      .printTo(reportFile.getPath())
+                      .noJars()
+                      .including("com.netflix.template.server.**")
+                          .including("com.netflix.template.client.**")
+                          .including("com.netflix.template.common.**")
+                      /*.withSlicing("module",
+                                   new NamedPattern(
+                                           "com.netflix.template.**", "template-server"),
+                                   new NamedPattern(
+                                           "com.netflix.template.**", "template-server"),
+                                   new NamedPattern(
+                                           "com.netflix.template.**", "template-client"),
+                                   "com.netflix.template.(*).**"
+        )*/
+        assertThat(graph, is(violationFree()))
+    }
+
+}
