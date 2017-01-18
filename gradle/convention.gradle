@@ -1,7 +1,7 @@
 status = version.toString().contains('SNAPSHOT') ? 'snapshot' : 'release'
 
 subprojects {project ->
-    status = rootProject.status
+        status = rootProject.status
 
     if (project in publishedModules) {
         apply plugin: 'java'
@@ -112,13 +112,9 @@ subprojects {project ->
         apply from: "$rootDir/gradle/integTest.gradle"
 
     }
-    if (project in benchmarkModules) {
-        apply plugin: "java"
-        //apply from: "$rootDir/gradle/benchmark.gradle"
-        //apply from: "${rootDir}/gradle/jmh.gradle"
 
-    }
 }
+
 apply plugin: "base"
 
 task cleanRoot(type: Delete) {

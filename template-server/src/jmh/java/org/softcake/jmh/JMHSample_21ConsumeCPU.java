@@ -22,7 +22,7 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
-package samples;
+package org.softcake.jmh;
 
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
-public class JMHSample_21_ConsumeCPU {
+public class JMHSample_21ConsumeCPU {
 
 /*
      * At times you require the test to burn some of the cycles doing nothing.
@@ -131,7 +131,7 @@ public class JMHSample_21_ConsumeCPU {
     public static void main(String[] args) throws RunnerException {
         System.out.println("Hello World!");
         Options opt = new OptionsBuilder()
-                .include(".*" + JMHSample_21_ConsumeCPU.class.getSimpleName() + ".*")
+                .include(".*" + JMHSample_21ConsumeCPU.class.getSimpleName() + ".*")
                 .warmupIterations(1)
                 .measurementIterations(5)
                 .forks(1)

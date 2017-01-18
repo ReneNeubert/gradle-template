@@ -1,105 +1,73 @@
 /**
  * Java microbenchmark harness: https://github.com/melix/jmh-gradle-plugin
  */
-apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'me.champeau.gradle.jmh'
-//apply plugin: 'eclipse'
-apply plugin: 'idea'
 
-//
-//sourceSets {
-//  jmh {
-//   /* compileClasspath += sourceSets.test.runtimeClasspath
-//    runtimeClasspath += sourceSets.test.runtimeClasspath*/
-//  }
-//}
+if (project in benchmarkModules) {
 
-/*dependencies {
-  jmhCompile project
-  jmhCompile 'org.openjdk.jmh:jmh-core:1.14.1'
-  jmhCompile 'org.openjdk.jmh:jmh-generator-annprocess:1.14.1'
-}*/
+    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'me.champeau.gradle.jmh'
+    apply plugin: 'idea'
+    configurations.jmh.dependencies.clear()
 
-sourceSets {
-     jmh {
-           compileClasspath += sourceSets.test.runtimeClasspath
-           runtimeClasspath += sourceSets.test.runtimeClasspath
-       }
-  }
+    idea.module {
+        scopes.PROVIDED.plus += [configurations.jmh]
+
+    }
+
+    dependencies {
+        afterEvaluate {
+            jmh configurations.testCompile.allDependencies
+            compile files("$buildDir/jmh-generated-classes/")
+
+        }
+    }
+
+    tasks.jmh {
+        group = 'Benchmarks'
+        description = 'Executes a Java microbenchmark'
+    }
 
 
-idea.module {
-  scopes.PROVIDED.plus += [ configurations.jmh ]
-  //scopes.PROVIDED.minus += configurations.compile
-}
+    jmhJar {
+        mergeServiceFiles()
+
+    }
+
+    jmh {
+        jmhVersion = '1.17.3'
+        duplicateClassesStrategy = 'warn'
 /*
-plugins.withType(EclipsePlugin) {
-  project.eclipse.classpath.plusConfigurations += [ configurations.jmh ]
-}*/
-dependencies {
-    afterEvaluate {
-        jmhCompile project
-        jmhCompile 'org.openjdk.jmh:jmh-core:1.17.3'
-        jmhCompile 'org.openjdk.jmh:jmh-generator-annprocess:1.17.3'
+ if (project.hasProperty('includePattern')) {
+       include = project.includePattern
+     } else {
+       tasks.jmh.doFirst { throw new GradleException("jmh: includePattern expected") }
+     }*/
+
+        // Benchmark parameters: Seperated by '&' for parameter types, and ',' for multiple values
+        if (project.hasProperty('benchmarkParameters')) {
+            benchmarkParameters = data.split('&').inject([:]) {map, token ->
+                token.split('=').with {map[it[0]] = it[1]}
+            }
+        }
+
+        // Benchmark mode: Throughput/thrpt, AverageTime/avgt, SampleTime/sample, SingleShotTime/ss,
+        // All/all
+        benchmarkMode = ['thrpt']
+        // Available time units are: [m, s, ms, us, ns]
+        timeUnit = 's'
+
+        // Charts: http://nilskp.github.io/jmh-charts
+        resultFormat = 'json'
+        resultsFile = file("${buildDir}/reports/jmh/results.json")
+        //humanOutputFile = file("${buildDir}/reports/jmh/human.txt") // human-readable output file
+
+        jvmArgs = '-server -Xmx2G -XX:+UseG1GC -XX:-UseBiasedLocking'
+        warmupIterations = 2
+        failOnError = true
+        iterations = 2
+        forceGC = true
+        fork = 1
     }
-}
-/*dependencies {
-  afterEvaluate {
-    jmh configurations.testCompile.allDependencies
-  }
-}*/
-
-tasks.jmh {
-  group = 'Benchmarks'
-  description = 'Executes a Java microbenchmark'
-    classpath = sourceSets.jmh.runtimeClasspath
-    main = 'org.openjdk.jmh.Main'
-
-    def include = project.properties.get('include', '');
-  /*classpath = sourceSets.jmh.runtimeClasspath
-  main = 'org.openjdk.jmh.Main'*/
-}
-/*jmhJar.doFirst {
-  new File("build/resources/test").mkdirs()
-}*/
-
-jmhJar {
-  mergeServiceFiles()
-  /*doFirst {
-    new File("build/resources/test").mkdirs()
-  }*/
+    build.dependsOn jmhCompileGeneratedClasses
 }
 
-jmh {
-  jmhVersion = '1.17.3'
-
-    //duplicateClassesStrategy = 'warn'
-
- /* if (project.hasProperty('includePattern')) {
-    include = project.includePattern
-  } else {
-    tasks.jmh.doFirst { throw new GradleException("jmh: includePattern expected") }
-  }*/
-  // Benchmark parameters: Seperated by '&' for parameter types, and ',' for multiple values
-  if (project.hasProperty('benchmarkParameters')) {
-    benchmarkParameters = data.split('&').inject([:]) { map, token ->
-      token.split('=').with { map[it[0]] = it[1] }
-    }
-  }
-
-  // Benchmark mode: Throughput/thrpt, AverageTime/avgt, SampleTime/sample, SingleShotTime/ss, All/all
-  benchmarkMode = ['thrpt']
-  // Available time units are: [m, s, ms, us, ns]
-  timeUnit = 's'
-
-  // Charts: http://nilskp.github.io/jmh-charts
-  resultFormat = 'json'
-  resultsFile = file("${buildDir}/reports/jmh/results.json")
-
-  jvmArgs = '-server -Xmx2G -XX:+UseG1GC -XX:-UseBiasedLocking'
-  warmupIterations = 2
-  failOnError = true
-  iterations = 2
-  forceGC = true
-  fork = 1
-}

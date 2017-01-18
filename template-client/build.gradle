@@ -1,88 +1,8 @@
 apply plugin: 'java'
-//apply from: "${rootDir}/gradle/jmh.gradle"
-apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'me.champeau.gradle.jmh'
+apply from: "${rootDir}/gradle/jmh.gradle"
 
-apply plugin: 'idea'
-/*configurations {
-    jmh
-}
-*/
-sourceSets {
-    jmh {
-
-        /*compileClasspath += sourceSets.test.runtimeClasspath
-        runtimeClasspath += sourceSets.test.runtimeClasspath*/
-        compileClasspath += main.output + test.output
-        runtimeClasspath += main.output + test.output
-        java.srcDir file('src/jmh/java')
-        resources.srcDir file('src/jmh/resources')
-    }
-}
 dependencies {
-
     compile 'org.slf4j:slf4j-api:1.6.3'
     compile 'com.sun.jersey:jersey-client:1.11'
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    afterEvaluate {
-        jmh configurations.testCompile.allDependencies
-
-    }
-    //jmh project
-    jmh group: 'org.openjdk.jmh', name: 'jmh-generator-annprocess', version: '1.17.3'
-    compile files("$buildDir/classes/jmh/")
-
-}
-idea {
-    module {
-        scopes.PROVIDED.plus += [project.configurations.jmh]
-    }
-}
-
-build.dependsOn jmhClasses
-
-jmh {
-    jmhVersion = '1.17.3'
-    //include = ''//https://github.com/melix/jmh-gradle-plugin/issues/6
-    //humanOutputFile = null
-    //include = 'samples\\.JMHSample_21_ConsumeCPU.*'
-    duplicateClassesStrategy = 'warn'
-
-    /* if (project.hasProperty('includePattern')) {
-       include = project.includePattern
-     } else {
-       tasks.jmh.doFirst { throw new GradleException("jmh: includePattern expected") }
-     }*/
-    // Benchmark parameters: Seperated by '&' for parameter types, and ',' for multiple values
-    if (project.hasProperty('benchmarkParameters')) {
-        benchmarkParameters = data.split('&').inject([:]) { map, token ->
-            token.split('=').with { map[it[0]] = it[1] }
-        }
-    }
-
-    // Benchmark mode: Throughput/thrpt, AverageTime/avgt, SampleTime/sample, SingleShotTime/ss, All/all
-    benchmarkMode = ['thrpt']
-    // Available time units are: [m, s, ms, us, ns]
-    timeUnit = 's'
-
-    // Charts: http://nilskp.github.io/jmh-charts
-    resultFormat = 'json'
-    resultsFile = file("${buildDir}/reports/jmh/results.json")
-    //humanOutputFile = file("${buildDir}/reports/jmh/human.txt") // human-readable output file
-
-    jvmArgs = '-server -Xmx2G -XX:+UseG1GC -XX:-UseBiasedLocking'
-    warmupIterations = 2
-    failOnError = true
-    iterations = 2
-    forceGC = true
-    fork = 1
-}
-
-
-
-tasks.jmh {
-    group = 'Benchmarks'
-    description = 'Executes a Java microbenchmark'
-    classpath = sourceSets.jmh.runtimeClasspath
-    main = 'org.openjdk.jmh.Main'
 }

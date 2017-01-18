@@ -50,7 +50,7 @@ ext {
         !(it.name in ["template-no-code", "template-manual"])
     }
     benchmarkModules = publishedModules.findAll {
-        !(it.name in ["template-no-code", "template-manual","template-server"])
+        !(it.name in ["template-no-code", "template-manual"])
     }
     apiModules = publishedModules.findAll {!(it.name in ["template-manual"])}
     sonarQubeModules = publishedModules
