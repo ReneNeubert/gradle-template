@@ -22,7 +22,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * @author René Neubert
+ * @author René Neubert.
  */
 public class TalkServerTest {
 

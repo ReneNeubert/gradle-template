@@ -114,7 +114,8 @@ subprojects {project ->
     }
     if (project in benchmarkModules) {
         apply plugin: "java"
-        apply from: "$rootDir/gradle/benchmark.gradle"
+        //apply from: "$rootDir/gradle/benchmark.gradle"
+        //apply from: "${rootDir}/gradle/jmh.gradle"
 
     }
 }

@@ -1,32 +1,101 @@
 apply plugin: "idea"
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'me.champeau.gradle.jmh'
+//apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+configurations {
+    benchmark
+}
 
 
 sourceSets {
     benchmark {
-        compileClasspath += main.output + test.output
-        runtimeClasspath += main.output + test.output
         java.srcDir file('src/benchmark/java')
         resources.srcDir file('src/benchmark/resources')
+        compileClasspath += project.configurations.benchmark + project.sourceSets.main.output
+        runtimeClasspath += project.configurations.benchmark + project.sourceSets.main.output
     }
 }
-// Setup dependencies for integration testing
+// Setup dependencies for benchmark testing
+/*dependencies {
+
+        benchmarkCompile project
+        benchmarkCompile 'org.openjdk.jmh:jmh-core:1.17.3'
+        benchmarkCompile 'org.openjdk.jmh:jmh-generator-annprocess:1.17.3'
+
+
+}*/
 dependencies {
-    benchmarkCompile sourceSets.main.output
-    benchmarkCompile sourceSets.test.output
-    benchmarkCompile configurations.testCompile
-    benchmarkRuntime configurations.testRuntime
-}
-configurations {
-    benchmarkCompile.extendsFrom testCompile
-    benchmarkRuntime.extendsFrom testRuntime
+    afterEvaluate {
+        benchmark configurations.testCompile.allDependencies
+    }
 }
 idea {
     module {
         testSourceDirs += sourceSets.benchmark.java.srcDirs
         testSourceDirs += sourceSets.benchmark.resources.srcDirs
-        scopes.TEST.plus.add(configurations.benchmarkCompile)
-        scopes.TEST.plus.add(configurations.benchmarkRuntime)
+       /* scopes.TEST.plus.add(configurations.benchmarkCompile)
+        scopes.TEST.plus.add(configurations.benchmarkRuntime)*/
+        scopes.PROVIDED.plus += [ configurations.benchmarkCompile ]
+        scopes.PROVIDED.minus += configurations.compile
 
     }
+}
+/*idea.module {
+    scopes.PROVIDED.plus += [ configurations.benchmark ]
+}*/
+/*
+plugins.withType(EclipsePlugin) {
+  project.eclipse.classpath.plusConfigurations += [ configurations.jmh ]
+}*/
+/*
+dependencies {
+    afterEvaluate {
+        benchmark configurations.testCompile.allDependencies
+    }
+}*/
+
+tasks.jmh {
+    group = 'Benchmarks'
+    description = 'Executes a Java microbenchmark'
+    classpath = sourceSets.benchmark.runtimeClasspath
+    main = 'org.openjdk.jmh.Main'
+}
+
+jmhJar {
+    mergeServiceFiles()
+}
+
+jmh {
+    jmhVersion = '1.17.3'
+
+    /* if (project.hasProperty('includePattern')) {
+       include = project.includePattern
+     } else {
+       tasks.jmh.doFirst { throw new GradleException("jmh: includePattern expected") }
+     }*/
+    // Benchmark parameters: Seperated by '&' for parameter types, and ',' for multiple values
+    if (project.hasProperty('benchmarkParameters')) {
+        benchmarkParameters = data.split('&').inject([:]) { map, token ->
+            token.split('=').with { map[it[0]] = it[1] }
+        }
+    }
+
+    // Benchmark mode: Throughput/thrpt, AverageTime/avgt, SampleTime/sample, SingleShotTime/ss, All/all
+    benchmarkMode = ['thrpt']
+    // Available time units are: [m, s, ms, us, ns]
+    timeUnit = 's'
+
+    // Charts: http://nilskp.github.io/jmh-charts
+    resultFormat = 'json'
+    resultsFile = file("${buildDir}/reports/jmh/results.json")
+
+    jvmArgs = '-server -Xmx2G -XX:+UseG1GC -XX:-UseBiasedLocking'
+    warmupIterations = 2
+    failOnError = true
+    iterations = 2
+    forceGC = true
+    fork = 1
 }
 

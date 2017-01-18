@@ -88,10 +88,13 @@ subprojects {
 
     if (plugins.hasPlugin(JavaPlugin) || plugins.hasPlugin(GroovyPlugin)) {
         dependencies {
-            compile 'javax.ws.rs:jsr311-api:1.1.1'
-            compile 'com.sun.jersey:jersey-core:1.11'
-            testCompile 'org.testng:testng:6.1.1'
-            testCompile 'org.mockito:mockito-core:1.8.5'
+            afterEvaluate {
+                compile 'javax.ws.rs:jsr311-api:1.1.1'
+                compile 'com.sun.jersey:jersey-core:1.11'
+                testCompile 'org.testng:testng:6.1.1'
+                testCompile 'org.mockito:mockito-core:1.8.5'
+            }
+
         }
     }
 }

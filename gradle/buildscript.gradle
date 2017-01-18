@@ -14,4 +14,6 @@ dependencies {
     classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.+"
    // classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
     classpath "de.schauderhaft.degraph:degraph-check:0.1.4"
+    classpath "me.champeau.gradle:jmh-gradle-plugin:0.3.1"
+    classpath "com.github.jengelman.gradle.plugins:shadow:1.2.4"
 }
