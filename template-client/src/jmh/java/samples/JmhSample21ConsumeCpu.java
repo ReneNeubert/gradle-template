@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 public class JmhSample21ConsumeCpu {
-    /*
+ /*
      * At times you require the test to burn some of the cycles doing nothing.
      * In many cases, you *do* want to burn the cycles instead of waiting.
      *

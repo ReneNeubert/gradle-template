@@ -3,26 +3,15 @@
         "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
         "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
 <module name="Checker">
-    <!--<property name="basedir" value="C:\Users\rene.neubert\.IntelliJIdea2016.3\config\settingsRepository\repository"/>-->
-    <!--
-       If you set the basedir property below, then all reported file
-       names will be relative to the specified directory. See
-       http://checkstyle.sourceforge.net/config.html#Checker
-
-       <property name="basedir" value="${basedir}"/>
-   -->
-     <module name="SuppressionFilter">
+    <module name="SuppressionFilter">
         <property name="file" value="${basedir}/softcake_suppressions.xml"/>
-         <property name="optional" value="false"/>
+        <property name="optional" value="false"/>
     </module>
 
     <!--<property name="cacheFile" value="${checkstyle.cache.file}"/>-->
     <property name="severity" value="error"/>
-
     <property name="fileExtensions" value="java, properties, xml"/>
-
     <property name="charset" value="UTF-8"/>
-
 
     <!-- Whitespace -->
     <module name="FileTabCharacter">
@@ -40,25 +29,6 @@
         <property name="max" value="1500"/>
         <property name="fileExtensions" value="java"/>
     </module>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     <module name="TreeWalker">
         <!-- Annotations -->
@@ -243,7 +213,7 @@
         <module name="JavadocTagContinuationIndentation"/>
         <module name="JavadocType">
             <property name="authorFormat" value="\S"/>
-                        <!-- avoid errors on tag '@noinspection' -->
+            <!-- avoid errors on tag '@noinspection' -->
             <property name="allowUnknownTags" value="true"/>
         </module>
         <module name="JavadocVariable">
@@ -305,7 +275,7 @@
         </module>
         <module name="TrailingComment"/>
         <module name="UncommentedMain">
-          <property name="excludedClasses" value="\.Main$"/>
+            <property name="excludedClasses" value="\.Main$"/>
         </module>
         <module name="UpperEll"/>
 
@@ -320,7 +290,7 @@
         </module>
         <module name="AbstractClassName"/>
         <module name="CatchParameterName">
-            <property name="format" value="^(e|t|ex|[a-z][a-z][a-zA-Z]+)$" />
+            <property name="format" value="^(e|t|ex|[a-z][a-z][a-zA-Z]+)$"/>
             <message key="name.invalidPattern"
                      value="Catch parameter name ''{0}'' must match pattern ''{1}''."/>
         </module>
@@ -347,11 +317,11 @@
         <module name="MemberName">
             <property name="format" value="^(id)|([x-z][0-9]*)|([a-z][a-z0-9][a-zA-Z0-9]+)$"/>
         </module>
-        <module name="MethodName">
+       <!-- <module name="MethodName">
             <property name="format" value="^[a-z][a-z0-9][a-zA-Z0-9]*$"/>
             <message key="name.invalidPattern"
                      value="Method name ''{0}'' must match pattern ''{1}''."/>
-        </module>
+        </module>-->
 
         <module name="MethodName">
             <property name="id" value="MethodNameRegular"/>
@@ -365,7 +335,6 @@
             <message key="name.invalidPattern"
                      value="Method name ''{0}'' must match pattern ''{1}''."/>
         </module>
-
 
 
         <module name="MethodTypeParameterName">
