@@ -33,7 +33,7 @@ public interface Conversation {
     /**
      * End the conversation.
      *
-     * @return
+     * @return Sentence words from geeting
      */
     Sentence farewell();
 }

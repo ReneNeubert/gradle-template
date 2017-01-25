@@ -22,6 +22,7 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
+
 package samples;
 
 import org.openjdk.jmh.annotations.Benchmark;
@@ -36,11 +37,13 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ *
+ */
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
-public class JMHSample_21_ConsumeCPU {
-
-/*
+public class JmhSample21ConsumeCpu {
+    /*
      * At times you require the test to burn some of the cycles doing nothing.
      * In many cases, you *do* want to burn the cycles instead of waiting.
      *
@@ -54,15 +57,17 @@ public class JMHSample_21_ConsumeCPU {
 
     @Benchmark
     public void consume_0000() {
+
         Blackhole.consumeCPU(0);
     }
 
     @Benchmark
     public void consume_0001() {
+
         Blackhole.consumeCPU(1);
     }
-
-  /*  @Benchmark
+    /*
+    @Benchmark
     public void consume_0002() {
         Blackhole.consumeCPU(2);
     }
@@ -128,10 +133,11 @@ public class JMHSample_21_ConsumeCPU {
      * b) Via the Java API:
      */
 
-    public static void main(String[] args) throws RunnerException {
-        System.out.println("Hello World!");
+    public static void main(final String[] args) throws RunnerException {
+
+        String placeHolder = ".*";
         Options opt = new OptionsBuilder()
-                .include(".*" + JMHSample_21_ConsumeCPU.class.getSimpleName() + ".*")
+                .include(placeHolder + JmhSample21ConsumeCpu.class.getSimpleName() + placeHolder)
                 .warmupIterations(1)
                 .measurementIterations(5)
                 .forks(1)

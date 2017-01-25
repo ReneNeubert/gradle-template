@@ -25,8 +25,8 @@
 
 package samples;
 
-import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OperationsPerInvocation;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
@@ -39,10 +39,13 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ *
+ */
 @State(Scope.Thread)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
-public class JMHSample_11_Loops {
+public class JmhSample11Loops {
 
     /*
      * It would be tempting for users to do loops within the benchmarked method.
@@ -59,8 +62,9 @@ public class JMHSample_11_Loops {
      * Suppose we want to measure how much it takes to sum two integers:
      */
 
-    int x = 1;
-    int y = 2;
+    private int x = 1;
+
+    private int y = 2;
 
     /*
      * This is what you do with JMH.
@@ -68,19 +72,21 @@ public class JMHSample_11_Loops {
 
     @Benchmark
     public int measureRight() {
-        return (x + y);
+
+        return x + y;
     }
 
     /*
      * The following tests emulate the naive looping.
      * This is the Caliper-style benchmark.
      */
-    private int reps(int reps) {
-        int s = 0;
+    private int reps(final int reps) {
+
+        int value = 0;
         for (int i = 0; i < reps; i++) {
-            s += (x + y);
+            value += x + y;
         }
-        return s;
+        return value;
     }
 
     /*
@@ -91,36 +97,42 @@ public class JMHSample_11_Loops {
     @Benchmark
     @OperationsPerInvocation(1)
     public int measureWrong_1() {
+
         return reps(1);
     }
 
     @Benchmark
     @OperationsPerInvocation(10)
     public int measureWrong_10() {
+
         return reps(10);
     }
 
     @Benchmark
     @OperationsPerInvocation(100)
     public int measureWrong_100() {
+
         return reps(100);
     }
 
     @Benchmark
     @OperationsPerInvocation(1000)
     public int measureWrong_1000() {
+
         return reps(1000);
     }
 
     @Benchmark
     @OperationsPerInvocation(10000)
     public int measureWrong_10000() {
+
         return reps(10000);
     }
 
     @Benchmark
     @OperationsPerInvocation(100000)
     public int measureWrong_100000() {
+
         return reps(100000);
     }
 
@@ -145,9 +157,10 @@ public class JMHSample_11_Loops {
      * b) Via the Java API:
      */
 
-    public static void main(String[] args) throws RunnerException {
+    public static void main(final String[] args) throws RunnerException {
+        String placeHolder = ".*";
         Options opt = new OptionsBuilder()
-                .include(".*" + JMHSample_11_Loops.class.getSimpleName() + ".*")
+                .include(placeHolder + JmhSample11Loops.class.getSimpleName() + placeHolder)
                 .warmupIterations(2)
                 .measurementIterations(2)
                 .forks(1)

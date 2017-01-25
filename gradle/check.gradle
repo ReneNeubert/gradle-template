@@ -1,12 +1,19 @@
 subprojects {
     if (project in publishedModules) {
+        def configDir = new File("$rootDir", 'codequality')
 
+        println(configDir)
 // Checkstyle
-      /*  apply plugin: 'checkstyle'
+        apply plugin: 'checkstyle'
         checkstyle {
             ignoreFailures = true
-            configFile = rootProject.file('codequality/checkstyle.xml')
-        }*/
+            //configFile = rootProject.file('codequality/checkstyle.xml')
+
+            configFile = new File(configDir, "softcake_checks.xml")
+            configProperties.basedir = configDir
+            toolVersion = '7.4'
+
+        }
 
 // FindBugs
      /*   apply plugin: 'findbugs'

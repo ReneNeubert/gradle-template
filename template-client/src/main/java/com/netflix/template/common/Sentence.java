@@ -37,9 +37,9 @@ public class Sentence {
     /**
      * Initialize sentence.
      *
-     * @param whole
+     * @param whole whole
      */
-    public Sentence(String whole) {
+    public Sentence(final String whole) {
 
         this.whole = whole;
     }
@@ -47,7 +47,7 @@ public class Sentence {
     /**
      * whole getter.
      *
-     * @return
+     * @return nothing
      */
     @XmlElement
     public String getWhole() {
@@ -55,7 +55,12 @@ public class Sentence {
         return whole;
     }
 
-    public void setWhole(String whole) {
+    /**
+     * whole setter.
+     *
+     * @param whole whole
+     */
+    public void setWhole(final String whole) {
 
         this.whole = whole;
     }
