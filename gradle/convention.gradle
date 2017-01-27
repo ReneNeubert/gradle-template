@@ -2,6 +2,12 @@ status = version.toString().contains('SNAPSHOT') ? 'snapshot' : 'release'
 
 subprojects {project ->
         status = rootProject.status
+    if (project in benchmarkModules) {
+        apply from: "$rootDir/gradle/jmh.gradle"
+    }
+    if (file("src/jmh").exists()) {
+      //  apply from: "$rootDir/gradle/jmh.gradle"
+    }
 
     if (project in publishedModules) {
         apply plugin: 'java'

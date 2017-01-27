@@ -1,0 +1,299 @@
+/*
+ * Copyright 2017 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// This only gets applied to the root project
+apply plugin: "idea"
+
+
+idea {
+
+    project {
+
+        jdkName "1.8"
+        languageLevel "1.8"
+        vcs = "Git"
+        wildcards.add 'ratpack.groovy'
+
+        createCopyright()
+        createCodeStyle()
+
+        /*File file = new File(
+                "C:\\Users\\rene.neubert\\Documents\\IdeaProjects\\softcake\\multi-java-template\\.idea\\copyright\\softcake.xml")
+
+        def parser = new XmlParser()
+        def response = parser.parse(file)
+        println(response)
+
+        def copyManager = response.@name == 'CopyrightManager' ? response :
+                response.find {it.@name == 'CopyrightManager'}
+        println("+++" + copyManager)
+        //copyManager.@default = "ASL2"
+        def aslCopy = copyManager.copyright.option.find {it.@name == "myName" && it.@value == "ASL2"}
+        println "accurate age: ${aslCopy}"
+        if (aslCopy == null) {
+            println "accurate age: ${aslCopy}"
+            copyManager.append(new XmlParser().parseText("""
+            <copyright>
+              <option name="notice" value="Copyright \$today.year the original author or authors.&#10;&#10;Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);&#10;you may not use this file except in compliance with the License.&#10;You may obtain a copy of the License at&#10;&#10;   http://www.apache.org/licenses/LICENSE-2.0&#10;&#10;Unless required by applicable law or agreed to in writing, software&#10;distributed under the License is distributed on an &quot;AS IS&quot; BASIS,&#10;WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.&#10;See the License for the specific language governing permissions and&#10;limitations under the License." />
+              <option name="keyword" value="Copyright" />
+              <option name="allowReplaceKeyword" value="" />
+              <option name="myName" value="ASL2" />
+              <option name="myLocal" value="true" />
+            </copyright>
+          """))
+        }*/
+
+        /*def module2copy = copyManager.module2copyright
+        def productionCode = module2copy.element.find { it.@module == "Production" && it.@copyright == "ASL2" }
+        if (!module2copyright) {
+          copyManager.append(new XmlParser().parseText("""
+                <module2copyright>
+                  <element module="Production" copyright="ASL2" />
+                </module2copyright>
+              """))
+        } else if (productionCode == null) {
+          module2copyright.first().append(new XmlParser().parseText("""
+                  <element module="Production" copyright="ASL2" />
+              """))
+        }
+    */
+
+        //new XmlNodePrinter(new PrintWriter(new FileWriter(file))).print(response)
+
+        //println(outputFile.parentFile)
+        //outputFile = new File(outputFile.parentFile, "/.idea/modules/${rootProject.name}.ipr")
+        /*ipr {
+
+            withXml {provider ->
+                def node = provider.asNode()
+
+                def newCodeStyle = new XmlParser().parse(file("gradle/idea/codeStyle.xml"))
+                def codeStyleSettingsManager = node.component.find {it.@name == ""ProjectCodeStyleSettingsManager"}
+                if (codeStyleSettingsManager) {
+                    codeStyleSettingsManager.replaceNode(newCodeStyle)
+                } else {
+                    node.append(newCodeStyle)
+                }
+
+                def nullableManager = node.component.find {it.'@name' == 'NullableNotNullManager'}
+                if (nullableManager) {
+                    nullableManager.parent().remove(nullableManager)
+                }
+
+                node.append(new XmlParser().parseText("""
+          <component name="NullableNotNullManager">
+            <option name="myDefaultNullable" value="ratpack.api.Nullable" />
+            <option name="myDefaultNotNull" value="" />
+            <option name="myNullables">
+              <value>
+                <list size="1">
+                  <item index="0" class="java.lang.String" itemvalue="ratpack.api.Nullable" />
+                </list>
+              </value>
+            </option>
+            <option name="myNotNulls">
+              <value>
+                <list size="0" />
+              </value>
+            </option>
+          </component>
+        """))
+
+                def copyrightManager = node.component.find {it.@name == 'CopyrightManager'}
+                copyrightManager.@default = "ASL2"
+                def aslCopyright = copyrightManager.copyright.option.find {it.@name == "myName" && it.@value == "ASL2"}
+                if (aslCopyright == null) {
+                    copyrightManager.append(new XmlParser().parseText("""
+            <copyright>
+              <option name="notice" value="Copyright \$today.year the original author or authors.&#10;&#10;Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);&#10;you may not use this file except in compliance with the License.&#10;You may obtain a copy of the License at&#10;&#10;   http://www.apache.org/licenses/LICENSE-2.0&#10;&#10;Unless required by applicable law or agreed to in writing, software&#10;distributed under the License is distributed on an &quot;AS IS&quot; BASIS,&#10;WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.&#10;See the License for the specific language governing permissions and&#10;limitations under the License." />
+              <option name="keyword" value="Copyright" />
+              <option name="allowReplaceKeyword" value="" />
+              <option name="myName" value="ASL2" />
+              <option name="myLocal" value="true" />
+            </copyright>
+          """))
+                }
+
+                def module2copyright = copyrightManager.module2copyright
+                def productionCodeModule = module2copyright.element.find {
+                    it.@module == "Production" && it.@copyright == "ASL2"
+                }
+                if (!module2copyright) {
+                    copyrightManager.append(new XmlParser().parseText("""
+            <module2copyright>
+              <element module="Production" copyright="ASL2" />
+            </module2copyright>
+          """))
+                } else if (productionCodeModule == null) {
+                    module2copyright.first().append(new XmlParser().parseText("""
+              <element module="Production" copyright="ASL2" />
+          """))
+                }
+
+                def javacSettings = node.component.find {it.@name == 'JavacSettings'}
+                if (!javacSettings) {
+                    node.append(new XmlParser().parseText("""
+          <component name="JavacSettings">
+            <option name="ADDITIONAL_OPTIONS_STRING" value="-Werror -Xlint:all -Xlint:-options -Xlint:-serial -Xlint:-classfile" />
+          </component>
+          """))
+                }
+            }
+        }*/
+    }
+}
+
+void createCopyright() {
+    def copyrightFolderPath = "${rootDir}/.idea/copyright"
+    def copyrightFolder = new File(copyrightFolderPath)
+
+    if (!copyrightFolder.exists()) {
+
+        copyrightFolder.mkdirs()
+
+    }
+
+    def copyrightFile = new File(copyrightFolderPath + "/ASL2.xml")
+
+    if (!copyrightFile.exists()) {
+        copyrightFile.write("""<component name="CopyrightManager">
+	<copyright>
+		<option name="notice" value="Copyright \$today.year the original author or authors.&#10;&#10;Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);&#10;you may not use this file except in compliance with the License.&#10;You may obtain a copy of the License at&#10;&#10;   http://www.apache.org/licenses/LICENSE-2.0&#10;&#10;Unless required by applicable law or agreed to in writing, software&#10;distributed under the License is distributed on an &quot;AS IS&quot; BASIS,&#10;WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.&#10;See the License for the specific language governing permissions and&#10;limitations under the License." />
+        <option name="keyword" value="Copyright" />
+        <option name="allowReplaceKeyword" value="" />
+        <option name="myName" value="ASL2" />
+        <option name="myLocal" value="true" />
+	</copyright>
+</component>""")
+    }
+
+    def profileSettings = new File(copyrightFolderPath + "/profiles_settings.xml")
+
+    if (profileSettings.exists()) {
+
+        def copyrightManager = new XmlParser().parse(profileSettings)
+
+        def copyrightManagerSettings = copyrightManager.children().find {
+
+            it.name() == "settings"
+
+        }
+
+        copyrightManagerSettings.@default = "ASL2"
+
+        def module2copyright = copyrightManagerSettings.module2copyright
+
+        def productionCodeModule = module2copyright.element.find {
+
+            it.@module == "Production" && it.@copyright == "ASL2"
+
+        }
+
+        if (!module2copyright) {
+
+            copyrightManagerSettings.append(new XmlParser().parseText("""<module2copyright>
+	<element module="Production" copyright="ASL2" />
+</module2copyright>"""))
+
+        } else if (productionCodeModule == null) {
+
+            module2copyright.first().append(
+                    new XmlParser().parseText("""<element module="Production" copyright="ASL2" />"""))
+        }
+
+        new XmlNodePrinter(new PrintWriter(new FileWriter(profileSettings))).print(copyrightManager)
+
+    } else {
+        profileSettings.write("""<component name="CopyrightManager">
+	<settings default="ASL2">
+		<module2copyright>
+			<element module="Production" copyright="ASL2" />
+		</module2copyright>
+	</settings>
+</component>""")
+    }
+}
+
+void createCodeStyle() {
+    def codeStyleFolderPath = "${rootDir}/.idea"
+
+    def codeStyleFile = new File(codeStyleFolderPath + "/codeStyleSettings.xml")
+
+    if (!codeStyleFile.exists()) {
+        codeStyleFile.write(
+                """<?xml version="1.0" encoding="UTF-8"?><project version="4"><component name="ProjectCodeStyleSettingsManager"></component></project>""")
+    }
+
+    def node = new XmlParser().parse(codeStyleFile)
+
+    def codeStyleSettingsManager = node.component.find {
+        it.@name == "ProjectCodeStyleSettingsManager"
+    }
+
+    def newCodeStyle = new XmlParser().parse(file("gradle/idea/codeStyle.xml"))
+
+    if (codeStyleSettingsManager) {
+        codeStyleSettingsManager.replaceNode(newCodeStyle)
+    } else {
+        node.append(newCodeStyle)
+    }
+
+    new XmlNodePrinter(new PrintWriter(new FileWriter(codeStyleFile))).print(node)
+
+
+}
+
+
+def executeOnShell(String command) {
+    println("-------------------------------------------------")
+    return executeOnShell(command, new File("${rootDir}"))
+}
+
+def executeOnShell(String command, File workingDir) {
+    println command
+    def process = new ProcessBuilder(addShellPrefix(command))
+            .directory(workingDir)
+            .redirectErrorStream(true)
+            .start()
+    process.inputStream.eachLine {println it}
+    process.waitFor();
+    return process.exitValue()
+}
+
+def addShellPrefix(String command) {
+    def commandArray = new String[3]
+    commandArray[0] = "sh"
+    commandArray[1] = "-c"
+    commandArray[2] = command
+    return commandArray
+}
+task fixTestSource {
+    doLast {
+        println("Hello Idea")
+        def configDir = new File("${rootDir}", '.idea').getCanonicalPath()
+        println(configDir)
+        final String dir = "${rootDir}/.idea"
+        final String cmd = 'find ' + 'C:/Users/rene.neubert/Documents/IdeaProjects/softcake/gradle-template/.idea' + ' -name \\*Test.iml | xargs perl -p -i -e \'s/isTestSource="false"/isTestSource="true"/g\''
+        println(cmd)
+        executeOnShell(cmd)
+    }
+}
+
+task myTask (type : Exec) {
+    //executable "fixIdeaSourcesetBug.sh"
+    commandLine 'sh', './fixIdeaSourcesetBug.sh'
+}
+//build.dependsOn myTask

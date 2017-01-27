@@ -27,7 +27,7 @@ import org.junit.Test;
 public class TalkServerIntegTest {
 
     @Test
-    public void farewell() throws Exception {
+    public void farewell_abc() throws Exception {
 
         TalkServer talkServer = new TalkServer();
         String whole = talkServer.farewell().getWhole();

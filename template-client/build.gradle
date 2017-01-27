@@ -1,5 +1,5 @@
 apply plugin: 'java'
-apply from: "${rootDir}/gradle/jmh.gradle"
+//apply from: "${rootDir}/gradle/jmh.gradle"
 
 dependencies {
     compile 'org.slf4j:slf4j-api:1.6.3'

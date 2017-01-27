@@ -1,17 +1,12 @@
-/**
- * Java microbenchmark harness: https://github.com/melix/jmh-gradle-plugin
- */
-
 if (project in benchmarkModules) {
-
+    apply plugin: 'idea'
     apply plugin: 'com.github.johnrengelman.shadow'
     apply plugin: 'me.champeau.gradle.jmh'
-    apply plugin: 'idea'
+
     configurations.jmh.dependencies.clear()
 
     idea.module {
-        scopes.PROVIDED.plus += [configurations.jmh]
-
+        scopes.TEST.plus.add(configurations.jmh)
     }
 
     dependencies {
@@ -30,44 +25,34 @@ if (project in benchmarkModules) {
 
     jmhJar {
         mergeServiceFiles()
-
     }
 
     jmh {
         jmhVersion = '1.17.3'
-        duplicateClassesStrategy = 'warn'
-/*
- if (project.hasProperty('includePattern')) {
-       include = project.includePattern
-     } else {
-       tasks.jmh.doFirst { throw new GradleException("jmh: includePattern expected") }
-     }*/
-
-        // Benchmark parameters: Seperated by '&' for parameter types, and ',' for multiple values
-        if (project.hasProperty('benchmarkParameters')) {
-            benchmarkParameters = data.split('&').inject([:]) {map, token ->
-                token.split('=').with {map[it[0]] = it[1]}
-            }
-        }
 
         // Benchmark mode: Throughput/thrpt, AverageTime/avgt, SampleTime/sample, SingleShotTime/ss,
         // All/all
         benchmarkMode = ['thrpt']
+
         // Available time units are: [m, s, ms, us, ns]
         timeUnit = 's'
 
         // Charts: http://nilskp.github.io/jmh-charts
         resultFormat = 'json'
         resultsFile = file("${buildDir}/reports/jmh/results.json")
-        //humanOutputFile = file("${buildDir}/reports/jmh/human.txt") // human-readable output file
-
+        //humanOutputFile = file("${buildDir}/reports/jmh/human.txt")
+        duplicateClassesStrategy = 'warn'
+        includeTests = false
         jvmArgs = '-server -Xmx2G -XX:+UseG1GC -XX:-UseBiasedLocking'
-        warmupIterations = 2
+        synchronizeIterations = false
+        threads = 2
+        warmupIterations = 1 //10
         failOnError = true
-        iterations = 2
+        iterations = 2 //10
         forceGC = true
-        fork = 1
+        fork = 1 //4
     }
+
     build.dependsOn jmhCompileGeneratedClasses
 }
 

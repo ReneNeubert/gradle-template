@@ -1,5 +1,4 @@
 import org.gradle.internal.jvm.Jvm
-
 import java.text.SimpleDateFormat
 
 buildscript {
@@ -44,12 +43,15 @@ ext {
     // module configuration
     publishedModules = ["template-client", "template-server"].collect {project(it)}
     noCodeModules = ["template-no-code"].collect {project(it)}
+
     integTestModules = publishedModules.findAll {
         !(it.name in ["template-no-code", "template-manual"])
     }
+
     benchmarkModules = publishedModules.findAll {
         !(it.name in ["template-no-code", "template-manual"])
     }
+
     apiModules = publishedModules.findAll {!(it.name in ["template-manual"])}
     sonarQubeModules = publishedModules
 
@@ -74,9 +76,11 @@ allprojects {
 }
 
 apply plugin: "com.jfrog.artifactory"
+apply from: "gradle/idea/idea.gradle"
 apply from: file('gradle/credentials.gradle')
 apply from: file('gradle/sonarqube.gradle')
 apply from: file('gradle/convention.gradle')
+
 //apply from: file('gradle/maven.gradle')
 apply from: file('gradle/check.gradle')
 //apply from: file('gradle/license.gradle')

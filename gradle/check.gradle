@@ -1,34 +1,68 @@
 subprojects {
     if (project in publishedModules) {
-        def configDir = new File("$rootDir", 'codequality')
+        def configDir = new File("${rootDir}", 'config')
 
-        println(configDir)
-// Checkstyle
         apply plugin: 'checkstyle'
+        def checkstyleConfigDir = "$configDir/checkstyle"
+
         checkstyle {
+            group = "Code Quality"
             ignoreFailures = true
-            //configFile = rootProject.file('codequality/checkstyle.xml')
-
-            configFile = new File(configDir, "softcake_checks.xml")
-            configProperties.basedir = configDir
+            configFile = new File(checkstyleConfigDir, "softcake_checks.xml")
+            configProperties.basedir = checkstyleConfigDir
             toolVersion = '7.4'
-
         }
 
-// FindBugs
-     /*   apply plugin: 'findbugs'
+        tasks.withType(Checkstyle) {
+            enabled = true //System.properties.containsKey('checkstyle')
+            group = "Code Quality"
+            reports {
+                xml.enabled = true
+                html.enabled = true
+            }
+        }
+
+
+        apply plugin: 'findbugs'
+
         findbugs {
+            effort = 'max'
             ignoreFailures = true
+            excludeFilter = new File(configDir, "findbugs/exclude.xml")
         }
-*/
-// PMD
-       /* apply plugin: 'pmd'
+
+        tasks.withType(FindBugs) {
+            enabled = false //System.properties.containsKey('findbugs')
+            group = 'Findbugs'
+            reports {
+                xml.enabled = true
+                html.enabled = false
+            }
+        }
+
+        apply plugin: 'pmd'
+
+        pmd {
+            ignoreFailures = true
+            ruleSets = []
+            toolVersion = '5.5.1'
+            ruleSetConfig = resources.text.fromFile(new File(configDir, "pmd/rulesSets.xml"))
+        }
+
         tasks.withType(Pmd) {
-            reports.html.enabled true
-        }*/
+            enabled = name.endsWith('Main') // && System.properties.containsKey('pmd')
+            group = "Code Quality"
+            reports {
+                xml.enabled = true
+                html.enabled = true
+            }
+        }
+
+
+
+
 
         apply plugin: 'jacoco'
-
         jacocoTestReport {
             group = "Coverage reports"
             description = 'Generate Jacoco coverage reports after running tests.'
