@@ -1,5 +1,21 @@
+/*
+ * Copyright 2017 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 import org.gradle.internal.jvm.Jvm
-import java.text.SimpleDateFormat
 
 buildscript {
     repositories {
@@ -27,9 +43,9 @@ github {
     license "Apache"
 }
 
-Date buildTimeAndDate = new Date()
 
 ext {
+
     githubProjectName = rootProject.name
     // Change if github project name is not the same as the root project's name
     isSnapshot = version.toString().endsWith("-SNAPSHOT")
@@ -54,11 +70,8 @@ ext {
 
     apiModules = publishedModules.findAll {!(it.name in ["template-manual"])}
     sonarQubeModules = publishedModules
+    generateManifest = false
 
-    buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
-    buildTime = new SimpleDateFormat('HH:mm:ss').format(buildTimeAndDate)
-    buildRevision = versioning.info.commit
-    builtByValue = project.hasProperty("builtBy") ? project.builtBy : project.defaultBuiltBy
     //System.properties['user.name']
 
     if (!javaVersion.java8Compatible) {
@@ -67,7 +80,7 @@ ext {
 }
 
 allprojects {
-    group = "org.softcake" // TEMPLATE: Set to organization of project
+    group = "${organization}.${githubProjectName}"  // TEMPLATE: Set to organization of project
     repositories {
         jcenter()
         mavenLocal()
@@ -99,12 +112,6 @@ subprojects {
 
         }
     }
-}
-
-artifactory {
-    //contextUrl = "http://oss.jfrog.org"
-    //contextUrl = "http://localhost:8081/artifactory"
-    contextUrl = 'http://oss.jfrog.org/artifactory'
 }
 
 artifactoryPublish.skip true

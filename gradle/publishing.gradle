@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 afterEvaluate {
     //TODO
     // assert description: "Project $project.path is published, must have a description"
@@ -5,13 +21,86 @@ afterEvaluate {
 apply plugin: 'maven-publish'
 apply plugin: 'maven'
 
+javadoc {
+    options.memberLevel = JavadocMemberLevel.PROTECTED
+    options.author = true
+    options.header = project.name
+    options.addStringOption('Xdoclint:html,syntax,reference', '-quiet')
+    options.links('http://docs.oracle.com/javase/8/docs/api/',
+            'http://typesafehub.github.com/config/latest/api/',
+            "http://google.github.io/guava/releases/20.0/api/docs/")
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    baseName = project.name
+    dependsOn tasks.classes
+    from sourceSets.main.allSource
+    classifier 'sources'
+    extension 'jar'
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    baseName = project.name
+    dependsOn tasks.javadoc
+    from tasks.javadoc.destinationDir
+    classifier 'javadoc'
+    extension 'jar'
+}
+
+tasks.withType(Jar) {
+    group 'Jars'
+    from(rootProject.projectDir) {
+        include 'LICENSE.txt'
+        into 'META-INF'
+    }
+}
+
+compileJava.doLast {
+    // Enable JAR manifest generation
+    rootProject.generateManifest = true
+}
+
+jar {
+    onlyIf {
+
+        rootProject.generateManifest
+
+    }
+    manifest {
+        attributes(
+                'Created-By': "${System.properties['java.version']} (" +
+                        "${System.properties['java.vendor']} " +
+                        "${System.properties['java.vm.version']})".toString(),
+                'Built-By': builtByValue,
+                'Build-Date': project.buildDate,
+                'Build-Time': project.buildTime,
+                'Build-Revision': buildRevision,
+                'Built-Gradle': gradle.gradleVersion,
+                'Specification-Title': project.name,
+                'Specification-Version': normalizeVersion(project.version),
+                'Specification-Vendor': 'softcake.org',
+                'Implementation-Title': project.name,
+                'Implementation-Version': project.version,
+                'Implementation-Vendor': 'softcake.org')
+
+    }
+    baseName = project.name
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
 
 def pomConfig = {
-    delegate.name project.name
-    delegate.description project.description
+    delegate.name "${project.group}:${project.name}"
+    delegate.description "Module \"${project.name}\" of softcake gradle template."
     delegate.url github.site
     delegate.inceptionYear '2016'
-
+    delegate.packaging 'jar'
     delegate.scm {
         delegate.connection github.scmConnection
         delegate.developerConnection github.scmConnection
@@ -48,8 +137,8 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            groupId project.group
-            artifactId rootProject.name + "." + project.name
+           // groupId project.group + "." + project.name
+           // artifactId project.name
 
             artifact sourcesJar {
                 classifier "sources"

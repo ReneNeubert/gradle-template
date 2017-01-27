@@ -227,6 +227,7 @@ void createCopyright() {
     }
 }
 
+
 void createCodeStyle() {
     def codeStyleFolderPath = "${rootDir}/.idea"
 
@@ -269,7 +270,7 @@ def executeOnShell(String command, File workingDir) {
             .redirectErrorStream(true)
             .start()
     process.inputStream.eachLine {println it}
-    process.waitFor();
+    process.waitFor()
     return process.exitValue()
 }
 
@@ -291,7 +292,7 @@ task fixTestSource {
         executeOnShell(cmd)
     }
 }
-
+//apply plugin: "base"
 task myTask (type : Exec) {
     //executable "fixIdeaSourcesetBug.sh"
     commandLine 'sh', './fixIdeaSourcesetBug.sh'
