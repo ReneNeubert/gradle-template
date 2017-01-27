@@ -57,7 +57,7 @@ ext {
     isWindows = org.gradle.internal.os.OperatingSystem.current().windows
 
     // module configuration
-    publishedModules = ["template-client", "template-server"].collect {project(it)}
+    publishedModules = ["template-client", "template-server","template-no-code"].collect {project(it)}
     noCodeModules = ["template-no-code"].collect {project(it)}
 
     integTestModules = publishedModules.findAll {
@@ -65,7 +65,7 @@ ext {
     }
 
     benchmarkModules = publishedModules.findAll {
-        !(it.name in ["template-no-code", "template-manual"])
+        !(it.name in ["template-manual"])
     }
 
     apiModules = publishedModules.findAll {!(it.name in ["template-manual"])}
@@ -89,7 +89,7 @@ allprojects {
 }
 
 apply plugin: "com.jfrog.artifactory"
-apply from: "gradle/idea/idea.gradle"
+apply from: file('gradle/idea/idea.gradle')
 apply from: file('gradle/credentials.gradle')
 apply from: file('gradle/sonarqube.gradle')
 apply from: file('gradle/convention.gradle')
