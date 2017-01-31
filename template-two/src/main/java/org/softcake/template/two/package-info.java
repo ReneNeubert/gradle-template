@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
-rootProject.name='gradle-template'
-include 'template-one','template-two', 'template-no-code', 'template-doc'
-
+/**
+ *
+ * @author Rene Neubert
+ *
+ */
+package org.softcake.template.two;

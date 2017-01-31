@@ -52,23 +52,10 @@ subprojects { project ->
         apply from: "$rootDir/gradle/bintray.gradle"
         apply from: "$rootDir/gradle/artifactory.gradle"
 
-        String branch = versioning.info.branch
+
         //TODO remove next line
         artifactoryPublish.skip true
-        final BRANCH_NAMES_PATTERN = /^(?:release[-\/])?[0-9]+(\.[0-9]+)?\.x$|^(?:feature[-\/]|hotfix[-\/]|develop|master)?$/
-        apply plugin: 'maven-publish'
-
-        if (!version.toString().endsWith('-SNAPSHOT')) {
-            publish.dependsOn getTasksByName("bintrayUpload", true)
-            if (branch.matches(BRANCH_NAMES_PATTERN)) {
-                bintrayUpload.dependsOn rootProject.getTasksByName("sonarqube", true)
-            }
-        } else if ((System.getenv('TRAVIS_PULL_REQUEST') ?: "false") == "false") {
-            publish.dependsOn getTasksByName("artifactoryPublish", true)
-            if (branch.matches(BRANCH_NAMES_PATTERN)) {
-                artifactoryPublish.dependsOn rootProject.getTasksByName("sonarqube", true)
-            }
-        }
+        apply from: "$rootDir/gradle/release.gradle"
         apply from: "$rootDir/gradle/degraph.gradle"
     }
     if (project in integTestModules) {
@@ -177,6 +164,7 @@ artifacts {
     archives aggregateJavadocJar
     archives aggregateJar
 }
+
 tasks.withType(Jar) {
     group 'Jars'
     from(rootProject.projectDir) {
@@ -184,6 +172,7 @@ tasks.withType(Jar) {
         into 'META-INF'
     }
 }
+
 task createAllJars(type: Jar) {
     dependsOn aggregateJar, aggregateJavadocJar, aggregateSourcesJar
 }

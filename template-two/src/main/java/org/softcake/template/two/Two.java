@@ -14,6 +14,38 @@
  * limitations under the License.
  */
 
-rootProject.name='gradle-template'
-include 'template-one','template-two', 'template-no-code', 'template-doc'
+package org.softcake.template.two;
 
+/**
+ * @author Rene Neubert.
+ */
+public class Two {
+
+    private String name;
+
+    /**
+     *
+     */
+    public Two() {
+        this("Two");
+    }
+
+    /**
+     * @param name the name
+     */
+    public Two(final String name) {
+
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("parameter name must not be null or empty");
+        }
+        this.name = name;
+    }
+
+    /**
+     * @return String.
+     */
+    public final String getName() {
+
+        return name;
+    }
+}

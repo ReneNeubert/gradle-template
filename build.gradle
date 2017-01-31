@@ -57,11 +57,11 @@ ext {
     isWindows = org.gradle.internal.os.OperatingSystem.current().windows
 
     // module configuration
-    publishedModules = ["template-client", "template-server","template-no-code"].collect {project(it)}
+    publishedModules = ["template-two", "template-two","template-no-code"].collect {project(it)}
     noCodeModules = ["template-no-code"].collect {project(it)}
 
     integTestModules = publishedModules.findAll {
-        !(it.name in ["template-no-code", "template-manual"])
+        !(it.name in ["template-no-code", "template-doc"])
     }
 
     benchmarkModules = publishedModules.findAll {
@@ -71,7 +71,7 @@ ext {
     apiModules = publishedModules.findAll {!(it.name in ["template-manual"])}
     sonarQubeModules = publishedModules
     generateManifest = false
-
+    println(publishedModules)
     //System.properties['user.name']
 
     if (!javaVersion.java8Compatible) {
@@ -108,6 +108,8 @@ subprojects {
                 compile 'com.sun.jersey:jersey-core:1.11'
                 testCompile 'org.testng:testng:6.1.1'
                 testCompile 'org.mockito:mockito-core:1.8.5'
+
+
             }
 
         }

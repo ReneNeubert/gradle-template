@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2017 the original author or authors.
  *
@@ -14,6 +15,11 @@
  * limitations under the License.
  */
 
-rootProject.name='gradle-template'
-include 'template-one','template-two', 'template-no-code', 'template-doc'
+apply plugin: 'java'
 
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile 'com.google.guava:guava:21.0'
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0-M3")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0-M3")
+}
